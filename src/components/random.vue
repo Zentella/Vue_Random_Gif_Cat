@@ -5,16 +5,23 @@
         <ol class="lista">        
             <li><label>Título: </label><input v-model="titulo"/></li>            
             <li class="Filtro"><label>Filtro: </label>
-            <select  v-model="filtro" id="filtro">
+             <select @change="cambioFiltro($event)"> 
+                <option v-for="(filtro, index) in filtros" :key="index" :value="filtro" v-text="filtro"></option> 
+            </select> 
+            <!--<select  v-model="filtro" id="filtro">
                 <option value="sepia">sepia</option>
                 <option value="blur">blur</option>
                 <option value="mono">mono</option>
                 <option value="negative">negative</option>
                 <option value="paint">paint</option>
                 <option value="pixel">pixel</option>            
-            </select></li>
+            </select>-->
+            </li>
             <li class="Color"><label>Color: </label>
-            <select   v-model="color" id="color">
+            <select @change="cambioColor($event)"> 
+                <option v-for="(item, index) in colores" :key="index" :value="item.color" v-text="item.texto"></option> 
+            </select> 
+            <!--<select   v-model="color" id="color">
                 <option value="red">rojo</option>
                 <option value="green">verde</option>
                 <option value="yellow">amarillo</option>
@@ -25,10 +32,10 @@
                 <option value="brown">café</option>
                 <option value="pink">rosa</option>
                 <option value="gray">gris</option>
-            </select>
-            <div :style="[styleObject, {background: color}]"></div>
+            </select>-->
+            <div :style="[styleObject, {background: color}]"></div><!--style v-bind o :style-->
             </li>
-            <li><label>Tamaño: </label><input type="number" v-model="tamano"/></li>
+            <li><label>Tamaño: </label><input type="number" v-model="tamano"/></li><!--input type="number" para solo ingresar numeros y no hacer la expresion regular-->
         </ol>           
       </div>   
       <button @click="buscar">Obtener mi gatito</button>  
@@ -42,6 +49,14 @@ export default {
 
   data() {
     return {
+        filtros: ['blur','mono','sepia','negative','paint','pixel'],
+        colores: [// array de objetos
+            {color: 'red', texto: 'rojo'},//item (primera pasada) item.texto=rojo item.color=red
+            {color: 'green', texto: 'verde'},
+            {color: 'blue', texto: 'azul'},
+            {color: 'white', texto: 'blanco'},
+            {color: 'green', texto: 'verde'},
+        ],
         titulo: 'Miau',
         tamano: '30',
         filtro: 'sepia',
@@ -50,15 +65,14 @@ export default {
         styleObject: {
             height:'30px',
             width:'30px',  
-            borderRadius:'15%',
+            borderRadius:'50%',//redondea bordes para convertir el cuadrado en circulo
             mozBorderRadius:'50px',
             webkitBorderRadius:'50px',
             margin: '-5% 0 0 105%',
         },
     };
   },
-  methods: {
-  },
+      
 
   created() {
     fetch(`https://cataas.com`)
@@ -73,12 +87,22 @@ export default {
         
   },
   methods:{
-        buscar(){           
-            fetch(`https://cataas.com/cat/gif/says/${this.titulo}?filter=${this.filtro}&color=${this.color}&size=${this.tamano}`)
+        buscar(){
+            var url = `https://cataas.com/cat/gif/says/${this.titulo}?filter=${this.filtro}&color=${this.color}&size=${this.tamano}`
+            this.clip = url
+
+            /*fetch(`https://cataas.com/cat/gif/says/${this.titulo}?filter=${this.filtro}&color=${this.color}&size=${this.tamano}`)
             .then((response) => {
                 this.clip = `https://cataas.com/cat/gif/says/${this.titulo}?filter=${this.filtro}&color=${this.color}&size=${this.tamano}`
-            });                       
-        }      
+            });*/
+        },
+        cambioFiltro(event){//($event)
+            this.filtro = event.target.value
+        },
+        cambioColor(event){//($event)
+            this.color = event.target.value
+        },
+
     }   
 };
 </script>
